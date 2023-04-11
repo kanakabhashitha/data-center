@@ -1,0 +1,17 @@
+{
+  "name": "data-center-broker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "broker.js",
+  "scripts": {
+    "start": "node broker.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "mqtt": "^4.3.7",
+    "nodemon": "^2.0.22"
+  }
+}
