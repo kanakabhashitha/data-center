@@ -25,8 +25,8 @@ io.on("connection", (socket) => {
 
   socket.on("initial_data", () => {
     collection_devices.find({}, { sort: "-timestamp" }).then((docs) => {
-      io.sockets.emit("get_data", docs);
-      // console.log(docs[0]);
+      const limitedDocs = docs.slice(0, 5);
+      io.sockets.emit("get_data", limitedDocs);
     });
   });
 });

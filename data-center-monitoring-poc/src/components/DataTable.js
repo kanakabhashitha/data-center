@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 
+import axios from "axios";
+import moment from "moment";
+
 const columns = [
-  { field: "id", headerName: "ID", width: 90 },
   {
-    field: "createdTime",
-    headerName: "Created Time",
-    width: 150,
+    field: "alarmTime",
+    headerName: "Alarm Time",
+    width: 200,
     editable: true,
   },
   {
@@ -24,8 +26,15 @@ const columns = [
     editable: true,
   },
   {
-    field: "severity",
-    headerName: "Severity",
+    field: "temperature",
+    headerName: "Temperature",
+    width: 110,
+    editable: true,
+    type: "number",
+  },
+  {
+    field: "humidity",
+    headerName: "Humidity",
     width: 110,
     editable: true,
     type: "number",
@@ -38,34 +47,37 @@ const columns = [
   },
 ];
 
-const rows = [
-  {
-    id: 1,
-    createdTime: "2022-03-27",
-    originator: "Jon",
-    type: "Critical",
-    severity: "85%",
-    status: "pending",
-  },
-  {
-    id: 2,
-    createdTime: "2022-03-28",
-    originator: "Jon",
-    type: "Warning",
-    severity: "45%",
-    status: "pending",
-  },
-  {
-    id: 3,
-    createdTime: "2022-03-29",
-    originator: "Jon",
-    type: "Warning",
-    severity: "40%",
-    status: "pending",
-  },
-];
-
 const DataTable = () => {
+  const [data, setData] = useState([]);
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/v1/alarm")
+      .then(function (response) {
+        setData(response.data.alarms);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [data]);
+
+  useEffect(() => {
+    const newRows = [];
+    for (let i = 0; i < data.length; i++) {
+      newRows.push({
+        id: data[i]._id,
+        alarmTime: moment(data[i].timestamp).format("MMMM Do YYYY, h:mm:ss a"),
+        originator: data[i].originator,
+        type: data[i].type,
+        temperature: data[i].temperature,
+        humidity: data[i].humidity,
+        status: data[i].status,
+      });
+    }
+    setRows(newRows);
+  }, [rows]);
+
   return (
     <>
       <Box sx={{ height: 300, width: "100%" }}>

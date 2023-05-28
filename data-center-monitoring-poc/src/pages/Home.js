@@ -6,7 +6,9 @@ import { Header, Gauge, LED, LineChart, DataTable } from "../components";
 
 import Wrapper from "../assets/wrappers/HomeStyle";
 
-const ENDPOINT = "http://127.0.0.1:4001";
+import moment from "moment";
+
+const ENDPOINT = "http://localhost:4001";
 
 const Home = () => {
   const [socket, setSocket] = useState(null);
@@ -35,6 +37,14 @@ const Home = () => {
     let dataArr = [];
     for (let i = 0; i < data?.length; i++) {
       dataArr?.push(data[i].humidity);
+    }
+    return dataArr;
+  };
+
+  const getTimeArr = () => {
+    let dataArr = [];
+    for (let i = 0; i < data?.length; i++) {
+      dataArr?.push(moment(data[i].timestamp).format("HH:mm:ss"));
     }
     return dataArr;
   };
@@ -86,7 +96,11 @@ const Home = () => {
 
       <section className="main-row-2">
         <div className="main-row-2-col-2">
-          <LineChart deviceTmp={getTempArr()} deviceHum={getHumArr()} />
+          <LineChart
+            deviceTmp={getTempArr()}
+            deviceHum={getHumArr()}
+            deviceTime={getTimeArr()}
+          />
         </div>
         <div className="main-row-2-col-2">
           <DataTable />

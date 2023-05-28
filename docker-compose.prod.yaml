@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: 
+      context: ./data-center-monitoring-poc
+    container_name: c_web
+    ports:
+      - 80:80
+    restart: unless-stopped
+    stdin_open : true
+    tty: true
+    depends_on:
+      - socket
+    networks:
+      - data-center-network
+      
+  socket:
+    build: ./Socket
+    container_name: c_socket
+    ports:
+      - 4001:4001
+    restart: unless-stopped
+    environment:
+      MONGO_URL: mongodb://db/DataCenterDatabase
+    depends_on:
+      - db
+    networks:
+      - data-center-network
+  
+  backend:
+    build: ./data-center-backend-poc
+    ports:
+      - 5000:5000
+    restart: unless-stopped
+    environment:
+      MONGO_URL: mongodb://db/DataCenterDatabase
+    depends_on:
+      - db
+    networks:
+      - data-center-network
+
+  db:
+    image: mongo:4.0.28-xenial
+    container_name: monogo-db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+    volumes:
+      - DataCenterDatabase:/data/db
+    networks:
+      - data-center-network
+
+volumes:
+  DataCenterDatabase:
+
+networks:
+  data-center-network:
+    driver: bridge
+
+
